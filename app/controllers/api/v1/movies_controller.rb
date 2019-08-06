@@ -1,7 +1,15 @@
 class Api::V1::MoviesController < ApplicationController
   def index
     @movies = Movie.all 
-    render json: @movies
+    @all_movies = []
+    @movies.each do |movie|
+      temp = {
+        id: movie.id,
+        title: movie.title
+      }
+      @all_movies << temp
+    end
+    render json: @all_movies
   end
 
   def show
