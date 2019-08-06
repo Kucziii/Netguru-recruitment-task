@@ -2,11 +2,8 @@ class MoviesController < ApplicationController
   before_action :authenticate_user!, only: [:send_info]
 
   def index
-    @movies = Movie.all.decorate
-    # @movies.each do |movie|
-    #   loop_through_movies(movie)
-    # end
-    # put result
+    loop_through_movies
+    puts @result
   end
 
   def show
@@ -29,7 +26,7 @@ class MoviesController < ApplicationController
   private
 
   def get_movie_data
-    movie_title = Movie.find(params[:id]).title
+    movie_title = URI.encode(Movie.find(params[:id]).title)
     link = "https://pairguru-api.herokuapp.com/api/v1/movies/" + movie_title
     response = HTTParty.get(link)
     @data = JSON.parse(response.body)
@@ -37,16 +34,28 @@ class MoviesController < ApplicationController
     @img_link = "https://pairguru-api.herokuapp.com#{img}"
   end
 
-  # def loop_through_movies(movie)
-  #   movie_title = movie.title
-  #   link = "https://pairguru-api.herokuapp.com/api/v1/movies/" + movie_title
-  #   response = HTTParty.get(link)
-  #   @data = JSON.parse(response.body)
-  #   img = @data["data"]["attributes"]["poster"]
-  #   result << {
-  #     plot: @data["data"]["attributes"]["plot"],
-  #     img_link: "https://pairguru-api.herokuapp.com#{img}",
-  #     rating: @data["data"]["attributes"]["rating"]
-  #   } 
-  # end
+  def loop_through_movies
+    movies = Movie.all.decorate
+    @movies_data = []
+
+    movies.each do |movie|
+      movie_title = URI.encode(movie.title)
+      link = "https://pairguru-api.herokuapp.com/api/v1/movies/" + movie_title
+      response = HTTParty.get(link)
+      @data = JSON.parse(response.body)
+      img = @data["data"]["attributes"]["poster"]
+      temp = {
+        id: movie.id,
+        title: movie.title,
+        desc: movie.description,
+        released: movie.released_at,
+        genre: movie.genre,
+        genre_name: movie.genre.name,
+        plot: @data["data"]["attributes"]["plot"],
+        img_link: "https://pairguru-api.herokuapp.com#{img}",
+        rating: @data["data"]["attributes"]["rating"]
+      }
+      @movies_data << temp
+    end
+  end
 end
