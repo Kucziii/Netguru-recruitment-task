@@ -4,12 +4,14 @@
       %tr
         %td= i + 1
         %td
-          %img.img-rounded{ src: movie.cover }
+          %img.img-rounded{ style: 'max-height: 200px; max-width: 150px', src: movie[:img_link] }
         %td
           %h4
-            = link_to movie.title, movie_path(movie)
+            = link_to movie[:title], movie_path(movie[:id])
+          %h5 rating: #{@data["data"]["attributes"]["rating"]}
           %p
             %strong
-              = link_to movie.genre.name, movies_genre_path(movie.genre)
-            = ' (' + movie.released_at.to_s + ')'
-          %p= movie.description
+              = link_to movie[:genre_name], movies_genre_path(movie[:genre])
+            = ' (' + movie[:released].to_s + ')'
+          %p= movie[:desc]
+          %p= movie[:plot]
