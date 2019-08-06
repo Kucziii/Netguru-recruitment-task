@@ -2,7 +2,7 @@
 %h2 rating: #{@data["data"]["attributes"]["rating"]}
 .jumbotron
   %p= @movie.description
-  %img#thumb{:src => @img_link, :alt => "My Pic"}
+  %img#thumb{style: 'max-height: 400px;', :src => @img_link, :alt => "My Pic"}
   %p= @data["data"]["attributes"]["plot"]
 - if user_signed_in?
-  %p= link_to 'Email me details about this movie', send_info_movie_path(@movie), class: 'btn btn-sm btn-default'
+  %p= link_to 'Email me details about this movie', send_info_movie_path(@movie),remote: true, class: 'btn btn-sm btn-default'
